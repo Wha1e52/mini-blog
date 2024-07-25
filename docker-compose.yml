@@ -1,0 +1,35 @@
+services:
+  php:
+    build:
+      context: ./php
+    container_name: php_container
+    ports:
+      - "8080:80"
+    volumes:
+      - ./php/src:/var/www/html
+    depends_on:
+      - mysql
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=appuserpass
+      - MYSQL_DATABASE=mini_blog
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql_container
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mini_blog
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: appuserpass
+      TZ: Europe/Moscow
+    command: --default-time-zone='Europe/Moscow' --init-file /docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  mysql_data:
